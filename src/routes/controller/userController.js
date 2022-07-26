@@ -6,12 +6,12 @@ const jwt = require('jsonwebtoken')
 const createUser = async function (req, res) {
     try {
         let data = req.body
-        const password = "generic"
-        const hash = bcrypt.hashSync(password, 8)
-        data.password = hash
-        //console.log(hash)
         let link = req.link //require from aws file
         data.profileImage = link
+        const password="Generic"
+        const salt = await bcrypt.genSalt(10)
+        const hashedPassword= await bcrypt.hash(password, salt)
+        data.password=hashedPassword
         const newUser = await UserModel.create(data)
         return res.status(201).send({ status: true, message: "User Created Successfully", data: newUser })
 
@@ -26,7 +26,11 @@ const userLogin = async(req, res) => {
     try {
         const data = req.body
         const {email, password} = data
-        const user = await UserModel.findOne({email, password})
+        const user = await UserModel.findOne({email})
+        let hashPassword=user.password
+        const checkPassword= bcrypt.compare(password, hashPassword)
+        console.log(checkPassword)
+        if(checkPassword==true){let userId=user._id}
         if(!user){return res.status(404).send({status : false, message : "No Registered User Found with this Credential"})};
 
         const token = jwt.sign({
