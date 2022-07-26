@@ -1,11 +1,14 @@
 const express= require('express');
 const router= express.Router();
 const {filesUpload} =require('../aws/aws')
-const {createUser}=require('./controller/userController')
+const {createUser,userLogin, getUser}=require('./controller/userController')
+const {userValidation, loginUserValidation}=require('./validation/userValidation')
 
 
 
-router.post('/register', filesUpload, createUser)
+router.post('/register', filesUpload, userValidation,createUser)
+router.post('/login', loginUserValidation,userLogin) 
+router.get('/user/:userId/profile',getUser) 
 
 
 router.all('/**',function(req,res){
