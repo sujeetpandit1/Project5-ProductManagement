@@ -53,10 +53,7 @@ const createProduct = async (req, res) => {
             return res.status(400).send({status : false, message : "currencyFormat should be ₹ only"})
         }
 
-        // if (!isValid(productImage)){
-        //     return res.status(400).send({status : false, message : "productImage is required"})
-        // }
-
+      
         if (style != undefined || style != null){
             if (typeof style != 'string'){
                 return res.status(400).send({status : false, message : "style should be in String "})
