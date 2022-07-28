@@ -116,7 +116,6 @@ const getProduct = async (req, res) => {
             temp = {title : name, ...temp}
         }
 
-        console.log(Number(priceGreaterThan))
         if (priceGreaterThan != undefined || priceGreaterThan != null){
             if (!isValidNumber(priceGreaterThan)){
                 return res.status(400).send({status : false, message : "priceGreaterThan should only contain Numbers"})
@@ -135,9 +134,10 @@ const getProduct = async (req, res) => {
             priceLessThan = -Infinity
         }
 
+        priceSort = Number(priceSort)
         if (priceSort != undefined || priceSort != null){
-            if (priceSort != 1 || priceSort != -1){
-                return res.stat
+            if (priceSort != 1 && priceSort != -1){
+                return res.status(400).send({status : false, message : "priceSort Should be 1 or -1."})
             }
         }
 
@@ -148,6 +148,16 @@ const getProduct = async (req, res) => {
             if(allData[i].price <= Number(priceGreaterThan) && allData[i].price >= Number(priceLessThan)){
                 finalData.push(allData[i])
             }
+        }
+        if (priceSort == 1){
+            finalData.sort((a, b) => {
+                return a.price - b.price
+            })
+        }
+        else{
+            finalData.sort((a, b) => {
+                return b.price - a.price
+            })
         }
         return res.status(200).send({status : false, message : "succesful", data : finalData})
     } catch (error) {
