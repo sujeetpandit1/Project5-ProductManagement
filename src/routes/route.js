@@ -1,14 +1,24 @@
 const express= require('express');
 const router= express.Router();
-const {filesUpload} =require('../aws/aws')
-const {createUser,userLogin, getUser}=require('./controller/userController')
-const {userValidation, loginUserValidation}=require('./validation/userValidation')
+const {filesUpload} =require('./aws/aws')
+const {createUser,userLogin, getUser, updateUser}=require('./controller/userController')
+const { createProduct, getProduct, getProductById,updateProduct,deleteProduct} = require('./controller/productController');
+const {userValidation, loginUserValidation,updateUserValidation}=require('./validation/userValidation')
+const {authentication,authorisationUserUpdate}=require('./auth/userAuth')
 
 
-
+/*-----------User's API-----------------*/
 router.post('/register', filesUpload, userValidation,createUser)
 router.post('/login', loginUserValidation,userLogin) 
-router.get('/user/:userId/profile',getUser) 
+router.get('/user/:userId/profile',authentication,getUser) 
+router.put('/user/:userId/profile',updateUserValidation,authorisationUserUpdate,updateUser)
+
+/*-----------Products's API-----------------*/
+router.post('/products', createProduct)
+router.get('/products', getProduct)
+router.get('/products/:productId', getProductById)
+router.put('/products/:productId', updateProduct)
+router.delete('/products/:productId', deleteProduct)
 
 
 router.all('/**',function(req,res){
