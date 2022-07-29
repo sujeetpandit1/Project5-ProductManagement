@@ -1,6 +1,7 @@
 const userModel = require('../model/userModel')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
+const { response } = require('express');
 const saltRounds = 10;
 
 const createUser = async function (req, res) {
@@ -32,6 +33,8 @@ const userLogin = async function (req, res){
         const token = jwt.sign({
         userId : user._id, 
         }, "group64", {expiresIn : "24h"})
+        //response.setHeader('x-api-key', token)
+
 
         return res.status(200).send({status : true, message : "Login Success-Fully", data : {userId : user._id, token : token}});
     } catch (error) {
@@ -58,9 +61,11 @@ const updateUser = async (req, res) => {
     try {
         const data=req.body
         let userId = req.params.userId;
-        console.log(data)
-        const securePassword = bcrypt.hashSync(data.password, saltRounds);
-        data.password=securePassword    
+        //console.log(data)
+        if (data.password){
+            const securePassword = bcrypt.hashSync(data.password, saltRounds);
+            data.password=securePassword 
+        }   
         if (!userId){return res.status(400).send({status : false, Message : "please put userId in path param"})};
         if (userId.length != 24) {return res.status(400).send({status: false, message: "please enter proper length of userId (24)"})};
         const updatedUser = await userModel.findByIdAndUpdate(userId, {$set:req.body},{new:true});

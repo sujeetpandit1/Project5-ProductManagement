@@ -14,7 +14,7 @@ router.get('/user/:userId/profile',authentication,getUser)
 router.put('/user/:userId/profile',updateUserValidation,authorisationUserUpdate,updateUser)
 
 /*-----------Products's API-----------------*/
-router.post('/products', createProduct)
+router.post('/products', filesUpload, createProduct)
 router.get('/products', getProduct)
 router.get('/products/:productId', getProductById)
 router.put('/products/:productId', updateProduct)
