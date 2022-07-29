@@ -1,7 +1,6 @@
 const express = require('express'); //express  is a frame work of node.js web application and it is a labrary  of other node web frame work 
 const app = express(); 
 const mongoose = require('mongoose');
-const AWS=require('aws-sdk')
 const multer=require('multer')
 
 const route = require('./routes/route')

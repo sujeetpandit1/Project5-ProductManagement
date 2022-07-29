@@ -53,10 +53,7 @@ const createProduct = async (req, res) => {
             return res.status(400).send({status : false, message : "currencyFormat should be ₹ only"})
         }
 
-        // if (!isValid(productImage)){
-        //     return res.status(400).send({status : false, message : "productImage is required"})
-        // }
-
+      
         if (style != undefined || style != null){
             if (typeof style != 'string'){
                 return res.status(400).send({status : false, message : "style should be in String "})
@@ -138,6 +135,7 @@ const getProduct = async (req, res) => {
             priceLessThan = Infinity
         }
 
+        priceSort = Number(priceSort)
         if (priceSort != undefined || priceSort != null){
             if (Number(priceSort) != 1 && Number(priceSort) != -1){
                 return res.status(400).send({status : false, message : "priceSort Should be 1 or -1."})

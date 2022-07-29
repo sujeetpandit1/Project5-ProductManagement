@@ -61,7 +61,7 @@ const updateUser = async (req, res) => {
     try {
         const data=req.body
         let userId = req.params.userId;
-        console.log(data)
+        //console.log(data)
         if (data.password){
             const securePassword = bcrypt.hashSync(data.password, saltRounds);
             data.password=securePassword 

@@ -30,26 +30,26 @@ const userValidation = async function (req, res, next) {
     let duplicatePhone = await userModel.findOne({ phone: phone });
     if (duplicatePhone)return res.status(400).send({ status: false, msg: `${phone} is already registered` });
 
-    if(!password.trim()){return res.status(400).send({ status: false, message: `password is required` })};
+    if( !password.trim()){return res.status(400).send({ status: false, message: `password is required` })};
     if (!/^\s*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,15}\s*$/.test(password.trim()))return res.status(400).send({ status: false, msg: "Password Should Be in Alpha Numeric and Special  Character (length 8-15)" });
   
-    if(!data["address.shipping.street"]){return res.status(400).send({ status: false, message: `Shipping Street is required` })};
-    // if (!(/^[a-zA-Z0-9/,.]+/.test(data["address.shipping.street"]))) {return res.status(400).send({ status: false, message: `Shipping Street Contain Specific Address` })};
+    if (!data["address.shipping.street"]){return res.status(400).send({ status: false, message: `Shipping Street is required` })};
+    if ((/^[!@$%^&*]+/.test(data["address.shipping.street"]))) {return res.status(400).send({ status: false, message: `Shipping Street Contain Specific Address` })};
 
-    if(!data["address.shipping.city"].trim()){return res.status(400).send({ status: false, message: `Shipping City is required` })};
-    // if (!(/^[A-Za-z]/.test(data["address.shipping.city"]))) {return res.status(400).send({ status: false, message: `Shipping City Contain Alphabet only` })};
+    if (!data["address.shipping.city"].trim()){return res.status(400).send({ status: false, message: `Shipping City is required` })};
+    if (!(/^[A-Za-z]/.test(data["address.shipping.city"]))) {return res.status(400).send({ status: false, message: `Shipping City Contain Alphabet only` })};
 
-    if(!data["address.shipping.pincode"].trim()){return res.status(400).send({ status: false, message: `Shipping Pin Code is required` })};
-    if (!/^\s*[123456789][0-9]{5}/.test(data["address.shipping.pincode"]))return res.status(400).send({ status: false, msg: "Shipping Pin Code Should be in Numbers Only and Should Not Start with 0" });
+    if (!data["address.shipping.pincode"].trim()){return res.status(400).send({ status: false, message: `Shipping Pin Code is required` })};
+    if (!/^[1-9]{1}[0-9]{5}/.test(data["address.shipping.pincode"]))return res.status(400).send({ status: false, msg: "Shipping Pin Code Should be in Numbers Only and Should Not Start with 0" });
 
-    if(!data["address.billing.street"].trim()){return res.status(400).send({ status: false, message: `Billing Street is required` })};
-    // if (!(/^([a-zA-Z0-9[!@#$%^&*] -])/.test(data["address.billing.street"]))) {return res.status(400).send({ status: false, message: `Billing Street Contain Specific Address` })};
+    if (!data["address.billing.street"].trim()){return res.status(400).send({ status: false, message: `Billing Street is required` })};
+    if ((/^[!@$%^&*]+/.test(data["address.billing.street"]))) {return res.status(400).send({ status: false, message: `Billing Street Contain Specific Address` })};
 
-    if(!data["address.billing.city"].trim()){return res.status(400).send({ status: false, message: `Billing City is required` })};
-    // if (!(/^[A-Za-z]/.test(data["address.billing.city"]))) {return res.status(400).send({ status: false, message: `Billing City Contain Alphabet only` })};
+    if (!data["address.billing.city"].trim()){return res.status(400).send({ status: false, message: `Billing City is required` })};
+    if (!(/^[A-Za-z]/.test(data["address.billing.city"]))) {return res.status(400).send({ status: false, message: `Billing City Contain Alphabet only` })};
 
-    if(!data["address.billing.pincode"].trim()){return res.status(400).send({ status: false, message: `Billing Pin Code is required` })};
-    if (!/^\s*[123456789][0-9]{5}\s*$/.test(data["address.billing.pincode"]))return res.status(400).send({ status: false, msg: "Billing Pin Code Should be in Numbers Only and Should Not  Start with 0" });
+    if (!data["address.billing.pincode"].trim()){return res.status(400).send({ status: false, message: `Billing Pin Code is required` })};
+    if (!/^[1-9]{1}[0-9]{5}/.test(data["address.billing.pincode"]))return res.status(400).send({ status: false, msg: "Billing Pin Code Should be in Numbers Only and Should Not  Start with 0" });
 
     next();
   };
@@ -87,17 +87,33 @@ const userValidation = async function (req, res, next) {
 
     const shippingStreet = data["address.shipping.street"]
     if(shippingStreet?.length == 0){return res.status(400).send({ status: false, message: `Please input Valid shipping street For Update` })};
+    if(shippingStreet){
+      if ((/^[!@$%^&*]+/.test(shippingStreet))) {return res.status(400).send({ status: false, message: `Shipping Street Contain Specific Address` })}};
+    
     const shippingCity = data["address.shipping.city"]
     if(shippingCity?.length == 0){return res.status(400).send({ status: false, message: `Please input Valid shipping City For Update` })};
+    if(shippingCity){
+      if (!(/^[A-Za-z]+/.test(shippingCity))) {return res.status(400).send({ status: false, message: `Shipping City Contain Specific Address` })}};
+
     const shippingPincode = data["address.shipping.pincode"]
     if(shippingPincode?.length == 0){return res.status(400).send({ status: false, message: `Please input Valid shipping pincode For Update` })};
+    if(shippingPincode){
+      if (!(/^[1-9]{1}[0-9]{5}/.test(shippingPincode))) {return res.status(400).send({ status: false, message: `Shipping Pincode Should be in 6 digit Only Not Start with 0` })}};
 
     const billingStreet = data["address.billing.street"]
     if(billingStreet?.length == 0){return res.status(400).send({ status: false, message: `Please input Valid billing street For Update` })};
+    if(billingStreet){
+      if ((/^[!@$%^&*]+/.test(billingStreet))) {return res.status(400).send({ status: false, message: `BIlling Street Contain Specific Address` })}};
+    
     const billingCity = data["address.billing.city"]
     if(billingCity?.length == 0){return res.status(400).send({ status: false, message: `Please input Valid billing City For Update` })};
-    const billingPincode = data["address.billing.pincode"]
+    if(billingCity){
+      if (!(/^[A-Za-z]+/.test(billingCity))) {return res.status(400).send({ status: false, message: `Billing City Contain Specific Address` })}};
+
+          const billingPincode = data["address.billing.pincode"]
     if(billingPincode?.length == 0){return res.status(400).send({ status: false, message: `Please input Valid billing pincode For Update` })};
+    if(billingPincode){
+      if (!(/^[1-9]{1}[0-9]{5}/.test(billingPincode))) {return res.status(400).send({ status: false, message: `Billing Pincode Should be in 6 digit Only Not Start with 0` })}};
 
   
     
