@@ -162,7 +162,7 @@ const getProduct = async (req, res) => {
                 return b.price - a.price
             })
         }
-        return res.status(200).send({status : false, message : "succesful", dataCount : finalData.length, data : finalData})
+        return res.status(200).send({status : true, message : "succesful", dataCount : finalData.length, data : finalData})
     } catch (error) {
         return res.status(500).send({status : false, message : error.message})
     }
