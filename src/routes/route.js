@@ -24,6 +24,9 @@ router.delete('/products/:productId', deleteProduct)
 router.post('/users/:userId/cart', createCart)
 
 
+router.post("/users/:userId/cart",createCart)
+
+
 router.all('/**',function(req,res){
     res.status(404).send({status:false,message:'the api you request, Is not found'})
 })
