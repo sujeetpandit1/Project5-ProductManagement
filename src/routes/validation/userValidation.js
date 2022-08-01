@@ -8,6 +8,7 @@ const userValidation = async function (req, res, next) {
   const fieldAllowed = ["fname","lname", "email", "phone", "password", "address.shipping.street", "address.shipping.city", "address.shipping.pincode",                 
                           "address.billing.street", "address.billing.city", "address.billing.pincode"];
   let data = req.body;
+  
   const keyOf = Object.keys(data);
   //console.log(keyOf)
     const receivedKey = fieldAllowed.filter((x) => !keyOf.includes(x));
