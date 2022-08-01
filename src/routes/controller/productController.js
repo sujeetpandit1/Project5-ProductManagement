@@ -123,7 +123,7 @@ const getProduct = async (req, res) => {
             }
         }
         else{
-            priceGreaterThan = -Infinity
+            priceGreaterThan = Infinity
         }
 
         if (priceLessThan != undefined || priceLessThan != null){
@@ -132,12 +132,12 @@ const getProduct = async (req, res) => {
             }
         }
         else{
-            priceLessThan = Infinity
+            priceLessThan = -Infinity
         }
 
-        priceSort = Number(priceSort)
+        priceSort = (priceSort)
         if (priceSort != undefined || priceSort != null){
-            if (Number(priceSort) != 1 && Number(priceSort) != -1){
+            if ((priceSort) != 1 && (priceSort) != -1){
                 return res.status(400).send({status : false, message : "priceSort Should be 1 or -1."})
             }
         }
@@ -146,16 +146,16 @@ const getProduct = async (req, res) => {
         let finalData = []
 
         for (let i = 0; i < allData.length; i++){
-            if(allData[i].price >= Number(priceGreaterThan) && allData[i].price <= Number(priceLessThan)){
+            if(allData[i].price <= Number(priceGreaterThan) && allData[i].price >= Number(priceLessThan)){
                 finalData.push(allData[i])
             }
         }
-        if (Number(priceSort) == 1){
+        if ((priceSort) == 1){
             finalData.sort((a, b) => {
                 return a.price - b.price
             })
         }
-        else if (Number(priceSort) == -1){
+        else {
             finalData.sort((a, b) => {
                 return b.price - a.price
             })
