@@ -55,19 +55,5 @@ const authorisationUserUpdate = async function (req, res, next) {
       res.status(500).send({ status: false, error: err.message });
     }
   };
-    //     let token = req.headers["x-api-key"] || req.headers['authorization'] ;
-    //     if (!token) return res.status(400).send({ status: false, message: "Please, provide the token" });
-    //     const decodedToken = jwt.verify(token, "group64");
-    //     let currentData = req.params.userId;
-    //     let userLoggedIn = decodedToken.userId;
-    //     if (currentData.length !== 24) {return res.status(400).send({ status: false, msg: "Please provide valid user Id" })};
-    //     const fetch = await userModel.findById(currentData);
-    //     const idOfuserId = fetch._id;
-    //     if (userLoggedIn==idOfuserId) {
-    //       next();
-    //     } else {res.status(403).send({ status: "false", msg: "user is not allowed to modify, authorisation required valid token to be preent in header" })};
-    //   } catch (error) {
-    //     res.status(500).send(error.message);
-    //   }
-    // };
+
 module.exports = { authentication, authorisationUserUpdate }

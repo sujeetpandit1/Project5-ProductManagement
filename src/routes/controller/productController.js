@@ -135,7 +135,7 @@ const getProduct = async (req, res) => {
             priceLessThan = Infinity
         }
 
-        priceSort = Number(priceSort)
+        //priceSort = Number(priceSort)
         if (priceSort != undefined || priceSort != null){
             if (Number(priceSort) != 1 && Number(priceSort) != -1){
                 return res.status(400).send({status : false, message : "priceSort Should be 1 or -1."})
