@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const userModel=require('../model/userModel')
-const { isValidBody, isValid, isValidField, isValidObjectId} = require('../validation/productValidation')
+const {isValidObjectId} = require('../validation/productValidation')
 
 
 const authentication = async (req, res, next) => {
@@ -26,7 +26,7 @@ const authentication = async (req, res, next) => {
 
 
 
-const authorisationUserUpdate = async function (req, res, next) {
+const authorisation = async function (req, res, next) {
     try {
       let bearerToken= req.headers['authorization'];
         if(!bearerToken) return res.status(400).send({ status: false, message: "Please, provide the token" });
@@ -56,4 +56,4 @@ const authorisationUserUpdate = async function (req, res, next) {
     }
   };
 
-module.exports = { authentication, authorisationUserUpdate }
+module.exports = { authentication, authorisation }

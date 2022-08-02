@@ -4,15 +4,15 @@ const {filesUpload} =require('./aws/aws')
 const {createUser,userLogin, getUser, updateUser}=require('./controller/userController')
 const { createProduct, getProduct, getProductById,updateProduct,deleteProduct} = require('./controller/productController');
 const {userValidation, loginUserValidation,updateUserValidation}=require('./validation/userValidation')
-const {authentication,authorisationUserUpdate}=require('./auth/userAuth');
-const { createCart, updateCart } = require('./controller/cartController');
+const {authentication,authorisation}=require('./auth/auth');
+const { createCart, updateCart, getCart,deleteCart} = require('./controller/cartController');
 
 
 /*-----------User's API-----------------*/
 router.post('/register', filesUpload, userValidation,createUser)
 router.post('/login', loginUserValidation,userLogin) 
 router.get('/user/:userId/profile',authentication,getUser) 
-router.put('/user/:userId/profile',updateUserValidation,authorisationUserUpdate,updateUser)
+router.put('/user/:userId/profile',updateUserValidation,authorisation,updateUser)
 
 /*-----------Products's API-----------------*/
 router.post('/products', filesUpload, createProduct)
@@ -21,8 +21,11 @@ router.get('/products/:productId', getProductById)
 router.put('/products/:productId', updateProduct)
 router.delete('/products/:productId', deleteProduct)
 
-router.post('/users/:userId/cart', createCart)
-router.put("/users/:userId/cart",updateCart)
+/*-----------Cart's API-----------------*/
+router.post('/users/:userId/cart', authentication,authorisation,createCart)
+router.put("/users/:userId/cart",authentication,authorisation,updateCart)
+router.get("/users/:userId/cart",authentication,authorisation,getCart)
+router.delete("/users/:userId/cart",authentication,authorisation,deleteCart)
 
 
 router.all('/**',function(req,res){
