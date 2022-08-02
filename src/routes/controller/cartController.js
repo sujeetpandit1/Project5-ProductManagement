@@ -18,13 +18,26 @@ const createCart = async (req, res) => {
         if (!product) return res.status(404).send({ status: false, message: "product not exist" })
 
         const cart = await cartModel.findOne({userId : userId})
+
+        let quantity=req.body.quantity
+        if(!quantity){quantity=1
+        }
+
+        quantity=Number(quantity)
+        if(quantity.toString()=='NaN'){
+            return res.status(400).send({status:false,message:"It's not a number"})
+        }
+       if(quantity%1!=0){
+        return res.status(400).send({status:false,message:"It's should be in integer not in decimal"})
+       }
+
         if(!cart) {
-            const data = await cartModel.create({userId : userId, items : [req.body], totalPrice : (product.price * Number(req.body.quantity)), totalItems : 1})
+            const data = await cartModel.create({userId : userId, items : [{productId,quantity}], totalPrice : (product.price *quantity), totalItems : 1})
             return res.status(201).json({status : true, data : data})
         }
         if (cart) {
-            quantity=Number(req.body.quantity)
-            cart.totalPrice = (productId.price * quantity) + cart.totalPrice
+          
+            cart.totalPrice = (product.price * quantity) + cart.totalPrice
             let k=null
             for(let i in cart.items){
                 if(cart.items[i].productId==productId){
@@ -33,9 +46,12 @@ const createCart = async (req, res) => {
                 }}
             if(k){cart.items[k].quantity+=quantity}
             
-        
-            else{ cart.items.push({ productId, quantity })}}
-
+            
+            else{  
+                cart.items.push({ productId, quantity })
+                // cart.totalItems +=1
+                cart.totalItems=cart.items.length
+            }}
         // let temp = cart.items.filter(Element => {
         //     if (Element.productId == productId){
         //         return true
@@ -45,7 +61,7 @@ const createCart = async (req, res) => {
         //     if (temp.length > 0){
         //     return res.status(404).json({status : false, message : "product already added"})
         // }
-        const data = await cartModel.findOneAndUpdate({userId : userId}, {items : [...cart.items, req.body], totalPrice : cart.totalPrice + (product.price * Number(req.body.quantity)), totalItems : cart.totalItems + 1}, {new : true}).select({__v:0})
+        const data = await cartModel.findOneAndUpdate({userId : userId},cart, {new : true}).select({__v:0})
 
         return res.status(201).json({status : true, data : data}) 
     } catch (error) {
