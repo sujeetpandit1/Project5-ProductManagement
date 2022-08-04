@@ -105,7 +105,7 @@ const getProduct = async (req, res) => {
             }
 
             if(!enumData.includes(size)){
-                return res.status(400).send({status : false, message : "availableSizes should be [S, XS, M, X, L, XXL, XL]"})
+                return res.status(400).send({status : false, message : "availableSizes should be S, XS, M, X, L, XXL, XL"})
             }
             temp = {...temp, availableSizes : size}
         }
@@ -123,7 +123,7 @@ const getProduct = async (req, res) => {
             }
         }
         else{
-            priceGreaterThan = Infinity
+            priceGreaterThan = -Infinity
         }
 
         if (priceLessThan != undefined || priceLessThan != null){
@@ -132,7 +132,7 @@ const getProduct = async (req, res) => {
             }
         }
         else{
-            priceLessThan = -Infinity
+            priceLessThan = Infinity
         }
 
         priceSort = (priceSort)
@@ -146,7 +146,7 @@ const getProduct = async (req, res) => {
         let finalData = []
 
         for (let i = 0; i < allData.length; i++){
-            if(allData[i].price <= Number(priceGreaterThan) && allData[i].price >= Number(priceLessThan)){
+            if(allData[i].price >= Number(priceGreaterThan) && allData[i].price <= Number(priceLessThan)){
                 finalData.push(allData[i])
             }
         }
@@ -190,6 +190,9 @@ const updateProduct = async(req, res) => {
         if (!isValidObjectId(productId)){
             return res.status(400).send({status : false, message : "Invalid product Id"})
         }
+        const findProduct=await productModel.findById((productId))
+        if(!findProduct) return res.status(400).send({status : false, message : "product not found"})
+        if(findProduct.isDeleted==true) return res.status(400).send({status : false, message : "product deleted"})
 
         const {title, description, price, currencyId, currencyFormat, isFreeShipping, style, availableSizes, installments} = req.body
 
@@ -297,9 +300,9 @@ const deleteProduct = async function (req, res) {
             
 
         return res.status(200).send({ status: true, message: "This product is deleted successfully", data: deleteProduct, })
+
         } catch (error) {
-        console.log(error);
-        return res.status(500).send({ status: false, message: error.message })
+            return res.status(500).send({ status: false, message: error.message })
     }
 };
 

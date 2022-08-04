@@ -2,8 +2,7 @@ const cartModel = require("../model/cartModel")
 const productModel = require("../model/productModel")
 const userModel = require("../model/userModel")
 const orderModel=require("../model/orderModel")
-const { isValid,isValidObjectId } = require("../validation/cartValidation")
-
+const { isValid,isValidObjectId,isValidBody } = require("../validation/orderValidation")
 
 
 const createOrder = async (req, res) => {
@@ -52,4 +51,54 @@ const createOrder = async (req, res) => {
     }
 };
 
-module.exports={createOrder}
+    const updateOrder = async function(req, res) {
+        try{
+            const userId = req.params.userId
+            if (!isValidObjectId(userId)) return res.status(400).send({ status: false, message: "UserId is invalid" });
+
+            const findUser = await userModel.findById(userId);
+            if (!findUser) return res.status(404).send({ status: false, message: 'User not found.' });
+                            
+            let data = req.body
+            if (isValidBody(data)) return res.status(400).send({ status: false, message: "Please enter your details to update." });
+
+            const {orderId, status} = data
+            if (!isValid(orderId)) return res.status(400).send({ status: false, messege: "Please provide OrderId" });
+
+            if (!isValidObjectId(orderId)) return res.status(400).send({ status: false, message: "ProductId is invalid" });
+
+            const findOrder = await orderModel.findById(orderId);
+            if (!findOrder) return res.status(400).send({ status: false, message: 'Order Id is incorrect.' });
+    
+            if(!isValid(status))return res.status(400).send({status:false, message: "Valid status is required. [completed, pending, cancelled]"});
+    
+            if(status === 'pending'){
+                if(findOrder.status === 'completed') return res.status(400).send({status:false, message: "Order can not be updated to pending. because it is completed."});
+                if(findOrder.status === 'cancelled') return res.status(400).send({status:false, message: "Order can not be updated to pending. because it is cancelled."});
+                if(findOrder.status === 'pending') return res.status(400).send({status:false, message: "Order is already pending."});
+            }
+    
+            if(status === 'completed'){
+                if(findOrder.status === 'completed') return res.status(400).send({status:false, message: "Order is already completed."});
+
+                const orderStatus = await orderModel.findOneAndUpdate({ _id: orderId}, 
+                    {$set: { items: [], totalPrice: 0, totalItems: 0, totalQuantity: 0, status }},{new:true});
+                return res.status(200).send({status: true, message: "order completed successfully", data: orderStatus})
+            }
+    
+            if(status === 'cancelled'){
+                if(findOrder.cancellable == false) return res.status(400).send({status:false, message:"Item can not be cancelled, because it is not cancellable."});
+                if(findOrder.status === 'cancelled') return res.status(400).send({status:false, message: "Order is already cancelled."});
+
+                const findOrderAfterDeletion = await orderModel.findOneAndUpdate({ userId: userId },
+                    {$set: {items: [], totalPrice: 0, totalItems: 0, totalQuantity : 0, status : 'cancelled' }},{new:true})
+                return res.status(200).send({status: true, message: "Order is cancelled successfully", data: findOrderAfterDeletion})
+            }
+        }
+        catch(err) {
+            return res.status(500).send({status : false, message : error.message})
+        }
+    }
+    
+
+module.exports={createOrder, updateOrder}

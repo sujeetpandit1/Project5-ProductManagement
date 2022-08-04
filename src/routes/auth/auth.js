@@ -12,9 +12,15 @@ const authentication = async (req, res, next) => {
         let bearer = bearerToken.split(' ')
         let token = bearer[1];
 
-        let decodedToken = jwt.verify(token, "group64");
-        if (!decodedToken) return res.status(403).send({ status: false, message: "Incorrect Token" })
+        let error = null
+        jwt.verify(token, "group64", function (err, decoded) {
+            if (err) error = err.message
+            if(decoded) req.decodeTokeen=decoded
+        })
 
+        if (error == "invalid signature") return res.status(401).send({ status: false, message:"authentication failed"})
+        if (error) return res.status(401).send({ status: false, message: error })
+       
         next();
 
 

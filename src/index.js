@@ -8,12 +8,12 @@ app.use(express.json()); // it parses in comming req wit  JSON payload it based 
 //app.use(multer().any())
 
 app.use(multer({
-    fileFilter: (req, file, cb) => {
+    fileFilter: (req, file, callBack) => {
       if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg") {
-        cb(null, true);
+        callBack(null, true);
       } else {
-        cb(null, false);
-        return cb(new Error("BAD REQUEST"));
+        callBack(null, false);
+        return callBack(new Error("BAD REQUEST"));
       }
     }
   }).any());

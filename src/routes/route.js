@@ -6,7 +6,8 @@ const { createProduct, getProduct, getProductById,updateProduct,deleteProduct} =
 const {userValidation, loginUserValidation,updateUserValidation}=require('./validation/userValidation')
 const {authentication,authorisation}=require('./auth/auth');
 const { createCart, updateCart, getCart,deleteCart} = require('./controller/cartController');
-const{createOrder}=require("./controller/orderController")
+const {createOrder,updateOrder}= require('./controller/orderController')
+
 
 /*-----------User's API-----------------*/
 router.post('/register', filesUpload, userValidation,createUser)
@@ -22,10 +23,14 @@ router.put('/products/:productId', updateProduct)
 router.delete('/products/:productId', deleteProduct)
 
 /*-----------Cart's API-----------------*/
-router.post('/users/:userId/cart', createCart)
+router.post('/users/:userId/cart', authentication,authorisation, createCart)
 router.put("/users/:userId/cart",authentication,authorisation,updateCart)
 router.get("/users/:userId/cart",authentication,authorisation,getCart)
 router.delete("/users/:userId/cart",authentication,authorisation,deleteCart)
+
+/*-----------Order's API-----------------*/
+router.post('/users/:userId/orders',authentication,authorisation, createOrder)
+router.put("/users/:userId/orders",authentication,authorisation,updateOrder)
 
 
 
