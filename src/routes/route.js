@@ -6,7 +6,7 @@ const { createProduct, getProduct, getProductById,updateProduct,deleteProduct} =
 const {userValidation, loginUserValidation,updateUserValidation}=require('./validation/userValidation')
 const {authentication,authorisation}=require('./auth/auth');
 const { createCart, updateCart, getCart,deleteCart} = require('./controller/cartController');
-
+const{createOrder}=require("./controller/orderController")
 
 /*-----------User's API-----------------*/
 router.post('/register', filesUpload, userValidation,createUser)
@@ -27,6 +27,9 @@ router.put("/users/:userId/cart",authentication,authorisation,updateCart)
 router.get("/users/:userId/cart",authentication,authorisation,getCart)
 router.delete("/users/:userId/cart",authentication,authorisation,deleteCart)
 
+
+
+router.post("/users/:userId/orders",createOrder)
 
 router.all('/**',function(req,res){
     res.status(404).send({status:false,message:'the api you request, Is not found'})
