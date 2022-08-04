@@ -67,9 +67,7 @@ const userValidation = async function (req, res, next) {
     const {email, password}= data;
     if(!email.trim()){return res.status(400).send({ status: false, message: `email is required` })};
     if(!password.trim()){return res.status(400).send({ status: false, message: `password is required` })};
-    
-    
-
+  
     next()
    
   };

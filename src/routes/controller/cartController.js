@@ -20,8 +20,7 @@ const createCart = async (req, res) => {
         const cart = await cartModel.findOne({userId : userId})
 
         let quantity=req.body.quantity
-        if(!quantity){quantity=1
-        }
+        if(!quantity){quantity=1}
 
         quantity=Number(quantity)
         if(quantity.toString()=='NaN'){
@@ -106,11 +105,13 @@ const updateCart = async function (req, res) {
                             cart.totalPrice -= obj.quantity*product.price
                             return false
                         }
+                        if(cart.totalPrice < 0) cart.totalPrice=0 
                         if(Number(removeProduct) < 0 ){
                             cart.totalPrice = cart.totalPrice - product.price
                             obj.quantity -= 1 //decrease quantity by -1
                            //obj.quantity += Number(removeProduct) // to decrease specific quantity
                         }
+                        if(obj.quantity < 0) obj.quantity=0 
                         // if(Number(removeProduct) > 0 ){
                         //     cart.totalPrice = cart.totalPrice - product.price
                         //     obj.quantity += 1 //add quantity by 1
