@@ -89,6 +89,10 @@ const updateCart = async function (req, res) {
         }else{
             return res.status(400).send({status: true, message: "Please provide cart id in body"});
         }
+
+
+
+
         if(productId){
             // console.log(cart.items)
             let upd = cart.items
@@ -126,6 +130,36 @@ const updateCart = async function (req, res) {
 
             return res.status(200).send({status : true, message : data})
         }
+
+
+
+        let getPrice = checkProduct.price
+
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].productId == productId) {
+                let totalProductprice = items[i].quantity * getPrice
+            
+
+                if (removeProduct === 0) {
+                    const updateProductItem = await cartModel.findOneAndUpdate({ userId: userId }, { $pull: { items: { productId: productId } }, totalPrice: searchCart.totalPrice - totalProductprice, totalItems: searchCart.totalItems - 1 }, { new: true })
+                
+                    return res.status(200).send({ status: true, msg: 'Successfully removed product', data: updateProductItem })
+
+                }
+                if (removeProduct === 1) {
+                    if (items[i].quantity === 1 && removeProduct === 1) {
+                        const removedProduct = await cartModel.findOneAndUpdate({ userId: userId }, { $pull: { items: { productId: productId } }, totalPrice: searchCart.totalPrice - totalProductprice, totalItems: searchCart.totalItems - 1 }, { new: true })
+                        return res.status(200).send({ status: true, msg: 'Successfully removed product and cart is empty', data: removedProduct })
+                    }
+                    items[i].quantity = items[i].quantity - 1
+                    const updatedCart = await cartModel.findOneAndUpdate({ userId: userId }, { items: items, totalPrice: searchCart.totalPrice - getPrice }, { new: true });
+                    return res.status(200).send({ status: true, msg: 'Quantity of product decreases by 1', data: updatedCart })
+                }
+            }
+
+
+        }
+    
 
         if (cart.totalPrice == 0 && cart.totalItems == 0) return res.status(400).send({ status: false, msg: "Cart is empty" });
         
