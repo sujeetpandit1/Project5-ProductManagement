@@ -109,9 +109,10 @@ const updateCart = async function (req, res) {
                         if(Number(removeProduct) < 0 ){
                             cart.totalPrice = cart.totalPrice - product.price
                             obj.quantity -= 1 //decrease quantity by -1
-                           //obj.quantity += Number(removeProduct) // to decrease specific quantity
+                            //obj.quantity += Number(removeProduct) // to decrease specific quantity
                         }
                         if(obj.quantity < 0) obj.quantity=0 
+                      
                         // if(Number(removeProduct) > 0 ){
                         //     cart.totalPrice = cart.totalPrice - product.price
                         //     obj.quantity += 1 //add quantity by 1
@@ -126,7 +127,7 @@ const updateCart = async function (req, res) {
 
             return res.status(200).send({status : true, message : data})
         }
-
+        
         if (cart.totalPrice == 0 && cart.totalItems == 0) return res.status(400).send({ status: false, msg: "Cart is empty" });
         
         let cartMatch = await cartModel.findOne({userId: userId})

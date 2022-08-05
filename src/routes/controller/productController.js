@@ -125,7 +125,7 @@ const getProduct = async (req, res) => {
         else{
             priceGreaterThan = -Infinity
         }
-
+        
         if (priceLessThan != undefined || priceLessThan != null){
             if (!isValidNumber(priceLessThan)){
                 return res.status(400).send({status : false, message : "priceGreaterThan should only contain Numbers"})
@@ -134,7 +134,7 @@ const getProduct = async (req, res) => {
         else{
             priceLessThan = Infinity
         }
-
+       
         priceSort = (priceSort)
         if (priceSort != undefined || priceSort != null){
             if ((priceSort) != 1 && (priceSort) != -1){
