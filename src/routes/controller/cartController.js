@@ -98,7 +98,7 @@ const updateCart = async function (req, res) {
             if (!product) return res.status(404).send({ status: false, msg: "Product not found" });
             if (removeProduct){
                 if (!isValid(removeProduct)) {return res.status(400).send({status: true, message: "Please provide cart id in body"})}
-                upd = cart.items.filter(obj => {
+                update = cart.items.filter(obj => {
                     if (obj.productId == productId){
                         if(Number(removeProduct) == 0){
                             cart.totalItems -= 1
