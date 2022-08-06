@@ -73,13 +73,14 @@ const createCart = async (req, res) => {
 const updateCart = async function (req, res) {
     try {
         const userId = req.params.userId
+        
         const {cartId, productId, removeProduct} = req.body
         let cart = {}
         
-        if (Object.keys(userId) == 0) {return res.status(400).send({status: false, message: "Please provide user id in path params"})}
+       // if (Object.keys(userId) == 0) {return res.status(400).send({status: false, message: "Please provide user id in path params"})}
         if (!isValidObjectId(userId)) {return res.status(400).send({status: false, message: "Please provide a valid User Id"})}
 
-        let user = await userModel.findOne({ _id: userId, isDeleted: false })
+        let user = await userModel.findOne({ _id: userId })
         if (!user) return res.status(404).send({ status: false, msg: "User not found" });
         
         if(isValid(cartId)){
@@ -96,26 +97,35 @@ const updateCart = async function (req, res) {
         if(productId){
             // console.log(cart.items)
             let upd = cart.items
-            if (!isValid(productId)) {return res.status(400).send({status: true, message: "Please provide cart id in body"})}
+            if (!isValid(productId)) {return res.status(400).send({status: true, message: "Please provide productId id in body"})}
             if (!isValidObjectId(productId)) {return res.status(400).send({status: false, message: "Please provide a valid Product Id"})}
             let product = await productModel.findOne({ _id: productId, isDeleted: false });
             if (!product) return res.status(404).send({ status: false, msg: "Product not found" });
-            if (removeProduct){
-                if (!isValid(removeProduct)) {return res.status(400).send({status: true, message: "Please provide cart id in body"})}
-                update = cart.items.filter(obj => {
+            if (removeProduct||removeProduct==0){
+                if (!isValid(removeProduct)) {return res.status(400).send({status: true, message: "Please provide removeproduct in body"})}
+               cart.items = cart.items.filter(obj => {
                     if (obj.productId == productId){
                         if(Number(removeProduct) == 0){
                             cart.totalItems -= 1
                             cart.totalPrice -= obj.quantity*product.price
                             return false
                         }
-                        if(cart.totalPrice < 0) cart.totalPrice=0 
+                        // if(cart.totalPrice < 0) cart.totalPrice=0 
+                        
                         if(Number(removeProduct) < 0 ){
+                            
                             cart.totalPrice = cart.totalPrice - product.price
                             obj.quantity -= 1 //decrease quantity by -1
                             //obj.quantity += Number(removeProduct) // to decrease specific quantity
+                            console.log(obj.quantity<=0)
+                            if(obj.quantity <= 0){
+                                cart.totalItems-=1
+                                return false
+                            } 
+
+                            
                         }
-                        if(obj.quantity < 0) obj.quantity=0 
+                       
                       
                         // if(Number(removeProduct) > 0 ){
                         //     cart.totalPrice = cart.totalPrice - product.price
@@ -126,20 +136,15 @@ const updateCart = async function (req, res) {
 
                     return true
                 })
+                
             }
-            const data = await cartModel.findByIdAndUpdate(req.body.cartId, {items : upd, totalItems : cart.totalItems, totalPrice : cart.totalPrice}, {new : true})
+           
+
+            const data = await cartModel.findByIdAndUpdate(req.body.cartId, {items : cart.items, totalItems : cart.totalItems, totalPrice : cart.totalPrice}, {new : true})
 
             return res.status(200).send({status : true, message : data})
         }
-
-
-
-
-        
-
-
-  
-        if (cart.totalPrice == 0 && cart.totalItems == 0) return res.status(400).send({ status: false, msg: "Cart is empty" });
+         if (cart.totalPrice == 0 && cart.totalItems == 0) return res.status(400).send({ status: false, msg: "Cart is empty" });
         
         let cartMatch = await cartModel.findOne({userId: userId})
         if (!cartMatch) return res.status(401).send({status: false, message: "This cart doesnot belong to you. Please check the input"});

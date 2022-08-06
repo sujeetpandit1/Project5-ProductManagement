@@ -5,8 +5,10 @@ const { isValidAddress } = require('./productValidation');
 
 const userValidation = async function (req, res, next) {
 
-  const fieldAllowed = ["fname","lname", "email", "phone", "password", "address.shipping.street", "address.shipping.city", "address.shipping.pincode",                 
-                          "address.billing.street", "address.billing.city", "address.billing.pincode"];
+  // const fieldAllowed = ["fname","lname", "email", "phone", "password", "address.shipping.street", "address.shipping.city", "address.shipping.pincode",                 
+  //                         "address.billing.street", "address.billing.city", "address.billing.pincode"];
+  const fieldAllowed = ["fname","lname", "email", "phone", "password", "address"];
+
   let data = req.body;
   
   const keyOf = Object.keys(data);
@@ -14,7 +16,7 @@ const userValidation = async function (req, res, next) {
     const receivedKey = fieldAllowed.filter((x) => !keyOf.includes(x));
     if (receivedKey.length) {return res.status(400).send({ status: "false", msg: `${receivedKey} field is missing` })};
 
-    const { fname, lname, email, phone, password }= data;
+    const { fname, lname, email, phone, password,address }= data;
   
     if(!fname.trim()){return res.status(400).send({ status: false, message: `fname is invalid or blank` })};
     if (!(/^[A-Za-z]{1,29}$/.test(fname.trim()))) {return res.status(400).send({ status: false, message: `fname is should be in alphabet only` })};
@@ -34,23 +36,45 @@ const userValidation = async function (req, res, next) {
     if( !password.trim()){return res.status(400).send({ status: false, message: `password is required` })};
     if (!/^\s*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,15}\s*$/.test(password.trim()))return res.status(400).send({ status: false, msg: "Password Should Be in Alpha Numeric and Special  Character (length 8-15)" });
   
-    if (!data["address.shipping.street"]){return res.status(400).send({ status: false, message: `Shipping Street is required` })};
-    if ((/^[!@$%^&*]+/.test(data["address.shipping.street"]))) {return res.status(400).send({ status: false, message: `Shipping Street Contain Specific Address` })};
+    
 
-    if (!data["address.shipping.city"].trim()){return res.status(400).send({ status: false, message: `Shipping City is required` })};
-    if (!(/^[A-Za-z]/.test(data["address.shipping.city"]))) {return res.status(400).send({ status: false, message: `Shipping City Contain Alphabet only` })};
+    const parsingFunc = function (key) {
+      if (typeof key === 'string') {
+          try {
+              key = JSON.parse(key);
+          } catch (err) {
+              return { status: false, message: "Provide valid object." }
+          }
+          return key;
+      }
+      return key;
+  }
 
-    if (!data["address.shipping.pincode"].trim()){return res.status(400).send({ status: false, message: `Shipping Pin Code is required` })};
-    if (!/^[1-9]{1}[0-9]{5}/.test(data["address.shipping.pincode"]))return res.status(400).send({ status: false, msg: "Shipping Pin Code Should be in Numbers Only and Should Not Start with 0" });
 
-    if (!data["address.billing.street"].trim()){return res.status(400).send({ status: false, message: `Billing Street is required` })};
-    if ((/^[!@$%^&*]+/.test(data["address.billing.street"]))) {return res.status(400).send({ status: false, message: `Billing Street Contain Specific Address` })};
+  data.address = parsingFunc(address); 
+            if(data.address.status===false) return res.status(400).send(data.address);
 
-    if (!data["address.billing.city"].trim()){return res.status(400).send({ status: false, message: `Billing City is required` })};
-    if (!(/^[A-Za-z]/.test(data["address.billing.city"]))) {return res.status(400).send({ status: false, message: `Billing City Contain Alphabet only` })};
 
-    if (!data["address.billing.pincode"].trim()){return res.status(400).send({ status: false, message: `Billing Pin Code is required` })};
-    if (!/^[1-9]{1}[0-9]{5}/.test(data["address.billing.pincode"]))return res.status(400).send({ status: false, msg: "Billing Pin Code Should be in Numbers Only and Should Not  Start with 0" });
+            const{shipping,billing}=data.address
+            
+
+    if ( !shipping.street){return res.status(400).send({ status: false, message: `Shipping Street is required` })};
+    if ((/^[!@$%^&*]+/.test(shipping.street))) {return res.status(400).send({ status: false, message: `Shipping Street Contain Specific Address` })};
+
+    if ( !shipping.city){return res.status(400).send({ status: false, message: `Shipping City is required` })};
+    if (!(/^[A-Za-z]/.test(shipping.city))) {return res.status(400).send({ status: false, message: `Shipping City Contain Alphabet only` })};
+
+    if (!shipping.pincode){return res.status(400).send({ status: false, message: `Shipping Pin Code is required` })};
+    if (!/^[1-9]{1}[0-9]{5}/.test(shipping.pincode))return res.status(400).send({ status: false, msg: "Shipping Pin Code Should be in Numbers Only and Should Not Start with 0" });
+
+    if (!billing.street){return res.status(400).send({ status: false, message: `Billing Street is required` })};
+    if ((/^[!@$%^&*]+/.test(billing.street))) {return res.status(400).send({ status: false, message: `Billing Street Contain Specific Address` })};
+
+    if (!billing.city){return res.status(400).send({ status: false, message: `Billing City is required` })};
+    if (!(/^[A-Za-z]/.test(billing.city))) {return res.status(400).send({ status: false, message: `Billing City Contain Alphabet only` })};
+
+    if (!billing.pincode){return res.status(400).send({ status: false, message: `Billing Pin Code is required` })};
+    if (!/^[1-9]{1}[0-9]{5}/.test(billing.pincode))return res.status(400).send({ status: false, msg: "Billing Pin Code Should be in Numbers Only and Should Not  Start with 0" });
 
     next();
   };
