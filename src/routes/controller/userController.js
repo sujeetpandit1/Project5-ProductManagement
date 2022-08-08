@@ -61,6 +61,7 @@ const getUser = async(req, res) => {
 const updateUser = async (req, res) => {
     try {
         const data=req.body
+        
         let userId = req.params.userId;
         //console.log(data)
         if (data.password){

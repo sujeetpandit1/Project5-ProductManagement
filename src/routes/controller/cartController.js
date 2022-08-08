@@ -117,7 +117,7 @@ const updateCart = async function (req, res) {
                             cart.totalPrice = cart.totalPrice - product.price
                             obj.quantity -= 1 //decrease quantity by -1
                             //obj.quantity += Number(removeProduct) // to decrease specific quantity
-                            console.log(obj.quantity<=0)
+                            // console.log(obj.quantity<=0)
                             if(obj.quantity <= 0){
                                 cart.totalItems-=1
                                 return false
@@ -166,7 +166,7 @@ const getCart = async function (req, res) {
         if (!isValidObjectId(userId)) {
             return res.status(400).send({ status: false, message: "userId is invalid" })
         }
-        const getData = await cartModel.findOne({ userId: userId }).select({ _id: 0 })
+        const getData = await cartModel.findOne({ userId: userId }).select({ _id: 0 }).populate('items.productId', 'title price productImage isFreeShipping');
         if (!getData) {
             return res.status(404).send({ status: false, message: "cart not found" })
         }
