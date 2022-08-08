@@ -195,6 +195,7 @@ const updateProduct = async(req, res) => {
         if(findProduct.isDeleted==true) return res.status(400).send({status : false, message : "product deleted"})
 
         const {title, description, price, currencyId, currencyFormat, isFreeShipping, style, availableSizes, installments} = req.body
+        if(Object.keys(req.body).length==0)return res.status(400).send({ status: false, message: "Please enter details" });
 
         let temp = {isDeleted : false}
 
