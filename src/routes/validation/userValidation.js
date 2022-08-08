@@ -1,10 +1,14 @@
 const userModel=require('../model/userModel');
 const { isValidAddress } = require('./productValidation');
 
+
 /*---------------------getUser Validation----------------------*/
 
-const userValidation = async function (req, res, next) {
 
+const userValidation = async function (req, res, next) {
+  // req.body.address=parsingFunc(req.body.address)
+  // console.log(typeof req.body.address)
+  // return res.send(req.body.address)
   // const fieldAllowed = ["fname","lname", "email", "phone", "password", "address.shipping.street", "address.shipping.city", "address.shipping.pincode",                 
   //                         "address.billing.street", "address.billing.city", "address.billing.pincode"];
   const fieldAllowed = ["fname","lname", "email", "phone", "password", "address"];

@@ -7,6 +7,7 @@ const saltRounds = 10;
 const createUser = async function (req, res) {
     try {
         let data = req.body
+        
         let link = req.link //require from aws file
         data.profileImage = link
         const hash = bcrypt.hashSync(data.password, saltRounds);
