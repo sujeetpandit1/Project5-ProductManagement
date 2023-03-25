@@ -23,7 +23,7 @@ app.use(multer({
   })
 
 
-mongoose.connect('mongodb+srv://isuzu:Arjun123@cluster0.rs68oil.mongodb.net/Group64Database')
+mongoose.connect('mongodb+srv://avijithazra12:Avijit16@cluster0.b7ob9.mongodb.net/Group64Database')
     .then(() => console.log('MongoDB is Connected'))
     .catch(error => console.log(error));
 

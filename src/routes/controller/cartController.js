@@ -160,9 +160,9 @@ const updateCart = async function (req, res) {
 const getCart = async function (req, res) {
     try {
         const userId = req.params.userId
-        if (Object.keys(userId) == 0) {
-            return res.status(400).send({ status: false, message: "userId is required" })
-        }
+        // if (Object.keys(userId) == 0) {
+        //     return res.status(400).send({ status: false, message: "userId is required" })
+        // }
         if (!isValidObjectId(userId)) {
             return res.status(400).send({ status: false, message: "userId is invalid" })
         }
@@ -184,9 +184,9 @@ const getCart = async function (req, res) {
 const deleteCart = async function (req, res) {
     try {
         const userId = req.params.userId
-        if (Object.keys(userId) == 0) {
-            return res.status(400).send({ status: false, message: "userId is required" })
-        }
+        // if (Object.keys(userId) == 0) {
+        //     return res.status(400).send({ status: false, message: "userId is required" })
+        // }
         if (!isValidObjectId(userId)) {
             return res.status(400).send({ status: false, message: "userId is invalid" })
         }

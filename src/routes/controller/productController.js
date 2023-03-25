@@ -300,7 +300,7 @@ const deleteProduct = async function (req, res) {
         if (deleteProduct.modifiedCount == 0) return res.status(400).send({status: false, message: "this product has been deleted already"});
             
 
-        return res.status(200).send({ status: true, message: "This product is deleted successfully", data: deleteProduct, })
+        return res.status(200).send({ status: true, message: "This product is deleted successfully", data: deleteProduct})
 
         } catch (error) {
             return res.status(500).send({ status: false, message: error.message })
